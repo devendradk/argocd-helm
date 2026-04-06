@@ -2,8 +2,12 @@
 #
 # 1. Push this repo to https://github.com/devendradk/argocd-helm (branch main).
 # 2. Install Argo CD into the cluster once (see README: kubectl kustomize --enable-helm … | kubectl apply).
-# 3. Apply this Application exactly once:
-#    kubectl apply -f bootstrap/root-application.yaml
+# 3. Enable Helm-in-Kustomize for the repo-server (global; not settable per-Application):
+#      bash bootstrap/enable-kustomize-helm.sh
+#    Without this, the argocd-platform app fails with: must specify --enable-helm
+#    (chicken-and-egg: Git sync cannot update argocd-cm until repo-server can already build this repo).
+# 4. Apply this Application exactly once:
+#      kubectl apply -f bootstrap/root-application.yaml
 #
 # Do NOT add this file to base/kustomization.yaml resources — it would recurse. Keep it only for manual bootstrap.
 #
