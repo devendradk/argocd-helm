@@ -22,8 +22,9 @@ configs:
   cm:
     create: true
     # url: https://argocd.example.com
-    # Required when an Application sources this repo’s Kustomize+Helm (`helmCharts` in kustomization.yaml).
-    # Matches: kubectl kustomize --enable-helm
+    # Lets argocd-repo-server run `kustomize build --enable-helm` for apps that use Kustomize’s Helm inflator
+    # (this repo’s base/kustomization.yaml). Baked into every install from these values—required for Git sync of
+    # argocd-platform; do not remove on cluster rebuilds.
     "kustomize.buildOptions": "--enable-helm"
 
   # argocd-cmd-params-cm — low-level flags; extend when you need explicit behavior.
