@@ -1,0 +1,67 @@
+# Shared Helm values for argo-cd (hub: manage this cluster + register external clusters).
+# Environment-specific changes live in overlays/*/ as Kustomize strategic-merge patches on top of
+# `kubectl kustomize --enable-helm base`.
+#
+# Multi-cluster: add destinations in the UI/CLI or Git-managed Secret/Cluster CRDs; ApplicationSet
+# cluster generators use those cluster entries. In-cluster (`https://kubernetes.default.svc`) stays
+# available for self-managed Applications (Argo CD managing this install from Git).
+#
+# Chart: https://artifacthub.io/packages/helm/argo/argo-cd
+
+fullnameOverride: ""
+
+# ClusterRoles for app controller / server when managing resources in the local cluster.
+createClusterRoles: true
+
+global:
+  # Replace with your real hostname before exposing the UI/API (ingress, TLS, SSO callbacks).
+  domain: argocd.example.com
+
+configs:
+  # argocd-cm — tune reconciliation; SSO lives here when you adopt Dex/OIDC.
+  cm:
+    create: true
+    # url: https://argocd.example.com
+    # Required when an Application sources this repo’s Kustomize+Helm (`helmCharts` in kustomization.yaml).
+    # Matches: kubectl kustomize --enable-helm
+    "kustomize.buildOptions": "--enable-helm"
+
+  # argocd-cmd-params-cm — low-level flags; extend when you need explicit behavior.
+  params:
+    create: true
+
+  # Public Git repo (HTTPS); no credentials required. Shown under Settings → Repositories.
+  repositories:
+    lfs256-code:
+      url: https://github.com/devendradk/LFS256-code.git
+      type: git
+
+# Application bootstrap: see applicationset-lfs256.yaml (Kustomize resource) + repositories above.
+
+# ApplicationSet controller: required for cluster/list/matrix generators and scalable app-of-apps patterns.
+applicationSet:
+  replicas: 1
+
+# Application controller: reconciles Application CRs and syncs workloads to target clusters (scale with sharding for HA).
+controller:
+  replicas: 1
+
+# Argo CD server: serves the API and web UI (scale out for availability behind the Service/Ingress).
+server:
+  replicas: 1
+
+# Repo server: clones Git repos and renders manifests (Helm, Kustomize, plugins); scale for concurrent sync load.
+repoServer:
+  replicas: 1
+
+# Dex: embedded OIDC/OAuth login bridge (disable if you only use external OIDC and configure it in argocd-cm).
+dex:
+  enabled: true
+
+# Notifications controller: subscribes to Application events and sends Slack/email/webhooks (optional operational noise).
+notifications:
+  enabled: false
+
+# redis-ha subchart: Redis with Sentinel for HA instead of the default single Redis Deployment.
+redis-ha:
+  enabled: false

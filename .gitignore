@@ -1,0 +1,2 @@
+# Kustomize Helm inflator chart cache (default chartHome: charts/)
+**/charts/

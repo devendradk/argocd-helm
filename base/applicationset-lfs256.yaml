@@ -1,0 +1,34 @@
+# Generates Application(s) for the LFS256 example repo. Managed as plain Kustomize resources
+# (not Helm extraObjects) so ApplicationSet stays easy to diff and extend.
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: lfs256-example-apps
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - name: example-app
+            path: argocd/example-app
+            namespace: example-app
+  template:
+    metadata:
+      name: lfs256-{{name}}
+      finalizers:
+        - resources-finalizer.argocd.argoproj.io
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/devendradk/LFS256-code.git
+        targetRevision: main
+        path: "{{path}}"
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: "{{namespace}}"
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true

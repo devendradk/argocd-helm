@@ -1,0 +1,29 @@
+# One-time bootstrap: wire Argo CD to sync this repository from Git (after Argo CD is installed once).
+#
+# 1. Push this repo to https://github.com/devendradk/argocd-helm (branch main).
+# 2. Install Argo CD into the cluster once (see README: kubectl kustomize --enable-helm … | kubectl apply).
+# 3. Apply this Application exactly once:
+#    kubectl apply -f bootstrap/root-application.yaml
+#
+# Do NOT add this file to base/kustomization.yaml resources — it would recurse. Keep it only for manual bootstrap.
+#
+# After this, changes to Applications, ApplicationSets, values, and overlays are applied by Argo CD when you git push
+# (plus webhook or poll interval), not by kubectl apply on every edit.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argocd-platform
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/devendradk/argocd-helm.git
+    targetRevision: main
+    path: overlays/prod
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
