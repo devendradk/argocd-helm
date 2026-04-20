@@ -3,7 +3,7 @@ kind: Kustomization
 
 resources:
   - ../../base
-  - ../../apps
 
 patches:
   - path: server-patch.yaml
+  - path: repo-server-patch.yaml

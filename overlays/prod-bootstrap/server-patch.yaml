@@ -1,0 +1,19 @@
+# UI/API HA: multiple server replicas behind Service/Ingress.
+# Application controller HA requires sharding (see Argo CD docs); not enabled here.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: argocd-server
+  namespace: argocd
+spec:
+  replicas: 2
+  template:
+    spec:
+      containers:
+        - name: server
+          resources:
+            requests:
+              cpu: 200m
+              memory: 512Mi
+            limits:
+              memory: 1Gi

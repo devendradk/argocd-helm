@@ -5,10 +5,12 @@
 # build Kustomize+Helm (`helmCharts` in kustomization.yaml) when syncing from Git—no separate patch or script.
 #
 # 1. Push to https://github.com/devendradk/argocd-helm (branch main).
-# 2. kubectl kustomize --enable-helm overlays/<same-as-below> | kubectl apply --server-side -f -   (then wait for rollouts; see README).
+# 2. First install Argo CD core from a *bootstrap* overlay (no app resources in first apply):
+#      kubectl kustomize --enable-helm overlays/prod-bootstrap | kubectl apply --server-side -f -
+#    (or overlays/test-bootstrap), then wait for rollouts (see README).
 # 3. kubectl apply -f bootstrap/root-application.yaml
 #
-# `spec.source.path` must match the overlay you applied in step 2 (e.g. overlays/prod vs overlays/test).
+# `spec.source.path` should point to the steady-state overlay (e.g. overlays/prod or overlays/test).
 #
 # Do NOT list this file under base/kustomization.yaml resources (avoids self-recursion).
 #

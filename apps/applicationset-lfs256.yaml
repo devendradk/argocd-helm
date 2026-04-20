@@ -1,5 +1,4 @@
-# Generates Application(s) for the LFS256 example repo. Managed as plain Kustomize resources
-# (not Helm extraObjects) so ApplicationSet stays easy to diff and extend.
+# Generates Application(s) for the LFS256 example repo.
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:

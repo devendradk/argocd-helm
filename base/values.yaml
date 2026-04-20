@@ -37,7 +37,7 @@ configs:
       url: https://github.com/devendradk/LFS256-code.git
       type: git
 
-# Application bootstrap: see applicationset-lfs256.yaml (Kustomize resource) + repositories above.
+# Application resources are layered from `apps/` via overlays (see overlays/prod and overlays/test).
 
 # ApplicationSet controller: required for cluster/list/matrix generators and scalable app-of-apps patterns.
 applicationSet:

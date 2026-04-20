@@ -1,12 +1,10 @@
-# Reference build: shared values only. Prefer building overlays/test or overlays/prod.
-# Build: kubectl kustomize --enable-helm base   (from repo root)
+# Base installs Argo CD control-plane resources only (chart + shared values).
+# App resources (ApplicationSet/Application) are layered by overlays via `apps/`.
 #
+# Build: kubectl kustomize --enable-helm base   (from repo root)
 # Chart: https://artifacthub.io/packages/helm/argo/argo-cd
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-
-resources:
-  - applicationset-lfs256.yaml
 
 helmCharts:
   - name: argo-cd
