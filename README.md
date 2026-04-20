@@ -10,6 +10,35 @@ Use this to run a **hub** Argo CD that can manage **this cluster and others** (r
 - `kubectl` **1.26+** with built-in Kustomize that supports Helm (`kubectl kustomize --help` should mention `--enable-helm`), **or** standalone [Kustomize](https://kubectl.docs.kubernetes.io/installation/kustomize/) v5+ with the same flag.
 - Network access on the machine running the command so Kustomize can download the Helm chart the first time (cached under `base/charts/`; that path is gitignored).
 
+## Repository layout
+
+```text
+argocd-helm/
+├── base/                    # Argo CD only: Helm chart + shared values.yaml
+├── apps/                    # GitOps resources Argo CD reconciles (e.g. ApplicationSet)
+├── overlays/
+│   ├── prod/                # Steady state: base + prod patches + apps
+│   ├── test/                # Steady state: base + test patches + apps
+│   ├── prod-bootstrap/      # First install: base + prod patches (no apps/)
+│   └── test-bootstrap/      # First install: base + test patches (no apps/)
+├── bootstrap/               # One-shot YAML (root Application); not part of base kustomization
+├── Makefile                 # make bootstrap-prod, apply-prod, etc.
+└── README.md
+```
+
+- **`base/`** — Installs the Argo CD control plane from the upstream chart. Same chart for every environment; environment tweaks live in overlays.
+- **`apps/`** — Manifests that **require** Argo CD CRDs (for example `ApplicationSet`). Referenced from steady-state overlays so they are not applied in the same `kubectl apply` wave as brand-new CRDs.
+- **`overlays/<env>/`** — **Steady state**: composes `../../base`, `../../apps`, and strategic-merge patches for that environment (`server-patch.yaml`, and for prod also `repo-server-patch.yaml`).
+- **`overlays/<env>-bootstrap/`** — **New cluster only**: same patches as prod/test, but **only** `../../base` (no `apps/`). Apply this first so CRDs exist before Git (or a second apply) adds `ApplicationSet` objects.
+- **`bootstrap/`** — `root-application.yaml` is applied **once** by you so Argo CD syncs the repo from Git at `spec.source.path` (typically `overlays/prod` or `overlays/test`). It is intentionally **not** listed under `base/` so you avoid self-recursive packaging.
+
+Build mental model:
+
+```text
+overlays/prod-bootstrap  →  base + prod patches
+overlays/prod            →  base + prod patches + apps
+```
+
 ## Configure before install
 
 1. Edit `base/values.yaml` (or add an overlay) and set a real hostname in `global.domain`, and uncomment/set `configs.cm.url` if you use ingress/TLS/SSO so callbacks and links are correct.
