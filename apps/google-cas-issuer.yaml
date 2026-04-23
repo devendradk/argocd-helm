@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: google-cas-issuer-management
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "11"
+spec:
+  project: platform
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: cert-manager
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+  sources:
+    - repoURL: https://charts.jetstack.io
+      chart: cert-manager-google-cas-issuer
+      targetRevision: v0.11.0
+      helm:
+        releaseName: google-cas-issuer
+        valueFiles:
+          - $values/clusters/management/google-cas-issuer/values.yaml
+    - repoURL: https://github.com/devendradk/platform-helm-values.git
+      targetRevision: main
+      ref: values
