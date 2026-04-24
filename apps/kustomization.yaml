@@ -5,3 +5,4 @@ resources:
   - applicationset-lfs256.yaml
   - google-cas-issuer.yaml
   - cert-manager.yaml
+  - cert-app.yaml
