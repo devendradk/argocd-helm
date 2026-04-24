@@ -13,7 +13,7 @@ spec:
             namespace: cert-app
   template:
     metadata:
-      name: {{name}}
+      name: "cert-app-{{name}}"
       finalizers:
         - resources-finalizer.argocd.argoproj.io
     spec:
