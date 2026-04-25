@@ -1,0 +1,31 @@
+# Ambient mesh only: enable when using Istio ambient profile.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: istio-ztunnel-management
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  project: platform
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: istio-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+  sources:
+    - repoURL: https://istio-release.storage.googleapis.com/charts
+      chart: ztunnel
+      targetRevision: 1.29.1
+      helm:
+        releaseName: istio-ztunnel
+        valueFiles:
+          - $values/clusters/management/1.29.1/ztunnel/values.yaml
+    - repoURL: https://github.com/devendradk/istio-helm-values.git
+      targetRevision: main
+      ref: values
