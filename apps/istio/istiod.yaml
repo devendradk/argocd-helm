@@ -30,6 +30,9 @@ spec:
       targetRevision: 1.29.1
       helm:
         releaseName: istiod-1-29-1
+        values: |
+          env:
+            TOKEN_AUDIENCES: project-3d092af6-3c65-4b1c-982.svc.id.goog,istio-ca
         valueFiles:
           - $values/clusters/management/1.29.1/istiod/values.yaml
     - repoURL: https://github.com/devendradk/istio-helm-values.git

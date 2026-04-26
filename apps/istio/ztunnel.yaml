@@ -29,9 +29,6 @@ spec:
           xdsAddress: istiod-1-29-1.istio-system.svc:15012
           global:
             platform: gke
-            sds:
-              token:
-                aud: project-3d092af6-3c65-4b1c-982.svc.id.goog
             priorityClassName: ""
           priorityClassName: ""
         valueFiles:
