@@ -7,6 +7,12 @@ metadata:
     argocd.argoproj.io/sync-wave: "4"
 spec:
   project: default
+  ignoreDifferences:
+    - group: admissionregistration.k8s.io
+      kind: ValidatingWebhookConfiguration
+      name: istio-validator-1-29-1-istio-system
+      jqPathExpressions:
+        - .webhooks[]?.clientConfig.caBundle
   destination:
     server: https://kubernetes.default.svc
     namespace: istio-system
