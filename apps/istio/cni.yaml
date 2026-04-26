@@ -22,6 +22,11 @@ spec:
       targetRevision: 1.29.1
       helm:
         releaseName: istio-cni
+        values: |
+          global:
+            platform: gke
+          cni:
+            cniBinDir: /home/kubernetes/bin
         valueFiles:
           - $values/clusters/management/1.29.1/cni/values.yaml
     - repoURL: https://github.com/devendradk/istio-helm-values.git
