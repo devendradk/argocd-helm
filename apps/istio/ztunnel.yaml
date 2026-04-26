@@ -25,6 +25,8 @@ spec:
       helm:
         releaseName: istio-ztunnel
         values: |
+          caAddress: istiod-1-29-1.istio-system.svc:15012
+          xdsAddress: istiod-1-29-1.istio-system.svc:15012
           global:
             platform: gke
             priorityClassName: ""
