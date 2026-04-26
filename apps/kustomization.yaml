@@ -6,3 +6,4 @@ resources:
   - google-cas-issuer.yaml
   - cert-manager.yaml
   - cert-app.yaml
+  - istio/
