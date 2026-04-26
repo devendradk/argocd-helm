@@ -8,3 +8,4 @@ resources:
   - cert-app.yaml
   - istio/
   - istio-csr.yaml
+  - trust-manager.yaml

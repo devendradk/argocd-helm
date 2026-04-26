@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: trust-manager-management
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  project: platform
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: cert-manager
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+  sources:
+    - repoURL: https://charts.jetstack.io
+      chart: trust-manager
+      targetRevision: v0.22.1
+      helm:
+        releaseName: trust-manager
+        valueFiles:
+          - $values/clusters/management/trust-manager/values.yaml
+    - repoURL: https://github.com/devendradk/platform-helm-values.git
+      targetRevision: main
+      ref: values
