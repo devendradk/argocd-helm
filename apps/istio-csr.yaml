@@ -25,6 +25,12 @@ spec:
         releaseName: istio-csr
         valueFiles:
           - $values/clusters/management/istio-csr/values.yaml
+        values: |
+          app:
+            tls:
+              # Reduce CAS issuance frequency for POC by extending istiod cert lifetime.
+              istiodCertificateDuration: 720h
+              istiodCertificateRenewBefore: 168h
     - repoURL: https://github.com/devendradk/platform-helm-values.git
       targetRevision: main
       ref: values
