@@ -4,6 +4,8 @@ kind: ApplicationSet
 metadata:
   name: lfs256-example-apps
   namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "40"
 spec:
   generators:
     - list:
@@ -14,6 +16,8 @@ spec:
   template:
     metadata:
       name: lfs256-{{name}}
+      annotations:
+        argocd.argoproj.io/sync-wave: "40"
       finalizers:
         - resources-finalizer.argocd.argoproj.io
     spec:

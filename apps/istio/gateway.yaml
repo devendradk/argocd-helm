@@ -4,7 +4,7 @@ metadata:
   name: istio-gateway-management
   namespace: argocd
   annotations:
-    argocd.argoproj.io/sync-wave: "3"
+    argocd.argoproj.io/sync-wave: "12"
 spec:
   project: default
   destination:
